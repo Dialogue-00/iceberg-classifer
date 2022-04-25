@@ -64,8 +64,8 @@ def train(device, model, params, save_path, train_dataloader, val_dataloader, cr
         # with tqdm(total=train_size // params.batch_size) as pbar:
         train_loss, train_acc = loss_epoch(model,device,criterion,train_dataloader,optimizer)
 
-        if scheduler is not None:
-            scheduler.step()
+        # if scheduler is not None:
+        #     scheduler.step()
 
         print("train loss: %.6f, acc: %.2f" %(train_loss,100*train_acc))
         # 存储训练各轮次结果值

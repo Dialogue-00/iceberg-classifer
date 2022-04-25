@@ -1,4 +1,5 @@
 source /home/lst/anaconda3/bin/activate
+# conda activate pt
 conda activate py3.8
 # python main.py -m resnet18 -p False -e 30 -l 2e-4
 # python main.py -m resnet34 -p False -e 50 -l 1e-4

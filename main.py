@@ -7,6 +7,7 @@ import torchvision
 from torchvision import transforms
 from torch import optim
 from torch.optim import optimizer
+from torch.optim import lr_scheduler
 from core.dataset import get_dataset
 from core.optimizer import get_opt
 from model import get_model
@@ -21,13 +22,14 @@ if __name__ == '__main__':
     
     parser = argparse.ArgumentParser(description='PyTorch Training')
     parser.add_argument('-s', '--seed', type=int, default=1)
-    parser.add_argument('-m', '--model', type=str, default='vgg16')
+    parser.add_argument('-m', '--model', type=str, default='densenet121')
     parser.add_argument('-p', '--pretrain', type=bool, default=True)
     parser.add_argument('-e', '--epochs', type=int , default=50)
-    parser.add_argument('-b', '--batch-size', type=int, default=32)
+    parser.add_argument('-b', '--batch-size', type=int, default=16)
     parser.add_argument('-o', '--optimizer', type=str, default='adam')
     parser.add_argument('-l', '--learning-rate', type=float, default=1e-4)
     parser.add_argument('-d', '--savedir', type=str, default='result/')
+    parser.add_argument('-r', '--runsavedir', type=str, default='runs/')
 
     params = parser.parse_args()
 
@@ -42,7 +44,11 @@ if __name__ == '__main__':
 
     # 引入tensorboard进行可视化
     from torch.utils.tensorboard import SummaryWriter
-    log_dir = "runs/" + os.path.join(params.model + '-' + str(params.epochs)+ '-' + str(params.batch_size) + '-' + params.optimizer + '-' + str(params.learning_rate) + '-' + 'pre' + '-' + str(params.pretrain))
+    log_dir = str(params.runsavedir) + os.path.join(params.model + '-' + str(params.epochs)+ '-' + str(params.batch_size) + '-' + params.optimizer + '-' + str(params.learning_rate) + '-' + 'pre' + '-' + str(params.pretrain))
+
+    if not os.path.exists(params.runsavedir):
+        os.makedirs(params.runsavedir)
+
     writer = SummaryWriter(log_dir=log_dir)
 
     # if params.model == 'alexnet':   
@@ -75,8 +81,12 @@ if __name__ == '__main__':
 
     criterion = torch.nn.CrossEntropyLoss(reduction='mean')
     optimizer = get_opt(model, params)
-    # lr_scheduler = 
+    # lr_scheduler = lr_scheduler.CosineAnnealingLR(optimizer, T_max=5)
+    # lr_scheduler = lr_scheduler.MultiStepLR(optimizer, [20,40], gamma=0.1)
 
-    train(device, model, params, save_path, train_dataloader, val_dataloader, criterion, optimizer, writer)
+
+#%%
+    # train(device, model, params, save_path, train_dataloader, val_dataloader, criterion, optimizer, writer)
+    train(device, model, params, save_path, train_dataloader, val_dataloader, criterion, optimizer, writer, lr_scheduler)
 
 
